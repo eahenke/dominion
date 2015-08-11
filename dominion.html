@@ -15,6 +15,7 @@
 	</head>
 
 	<body>
+		
 		<h1>Dominion Card Randomizer</h1>
 
 		<article class="content">
@@ -22,7 +23,7 @@
 
 				<legend>Sets:</legend>
 				<div>
-					<div>
+					<div class="sets">
 						<label><input type="checkbox" value="base" checked/>Base</label>
 						<label><input type="checkbox" value="intrigue"/>Intrigue</label>
 						<label><input type="checkbox" value="seaside"/>Seaside</label>
@@ -31,24 +32,40 @@
 						<label><input type="checkbox" value="cornucopia"/>Cornucopia</label>
 					</div>
 
-					<div>
+					<div class="sets">
 						<label><input type="checkbox" value="hinterlands"/>Hinterlands</label>
 						<label><input type="checkbox" value="dark ages"/>Dark Ages</label>
 						<label><input type="checkbox" value="guilds"/>Guilds</label>
 						<label><input type="checkbox" value="adventures"/>Adventures</label>
 						<label><input type="checkbox" value="promo"/>Promo</label>
+						<label><input type="checkbox" value="all"/>All</label>
 					</div>
+
 				</div>
 
-				<div class="button-wrapper">
-					<button class="get-cards">Get cards</button>
-				</div>
+
 			</fieldset>
+
+			<fieldset>
+				<legend>Options</legend>
+				<div>
+					<label><input type="checkbox" name="moat" />Include Moat if attack cards in Supply <span>(even if Base not selected)</span></label>
+				</div>	
+			</fieldset>
+
+			<div class="button-wrapper">
+				<button class="get-cards">Get cards</button>
+			</div>
 
 			<div class="output grid-container"></div>
 
 
 		</article>
+
+		<footer class="disclaimer">
+			<p>This script is not provided by nor endorsed by Donald X. Vaccarino or Rio Grande Games.</p>
+		</footer>
+
 
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

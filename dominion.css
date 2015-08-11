@@ -11,21 +11,26 @@ html {
 
 body {
 	font-family: 'Open Sans', sans-serif;
+	margin: 0;
+	color: #333;
 }
 
 h1 {
 	text-align: center;
 }
 
+h2 {
+	margin-bottom: 0.5em;
+}
+
 article {
 	width: 75%;
 	margin-right: auto;
 	margin-left: auto;
+	margin-bottom: 1em;
 }
 
-
-
-fieldset > div > div, .button-wrapper {
+.disclaimer, .sets, .button-wrapper {
 	width: 80%;
 	margin-left: auto;
 	margin-right: auto;
@@ -37,7 +42,6 @@ button {
 	margin-top: 1em;
 }
 
-
 label {
 	width: 25%;
 	margin-right: 20px;
@@ -45,15 +49,19 @@ label {
 	text-align: center;
 }
 
-.card {
-	height: 300px;
-	width: 100%;	
+label span {
+	font-size: 0.7em;
+	font-style: italic;
+}
+
+/*.card {
+	height: 200px;
 	border-radius: 5px;
-	border: 2px solid blue;
-	
+	border: 2px solid blue;	
 }
 
 .card p {
+
 	position: relative;
 	top: 50%;
 	transform: translateY(-50%);
@@ -62,11 +70,34 @@ label {
 	margin: 0;
 
 	font-size: 1.5em;
+}*/
+
+.output {
+	min-height: 250px;
 }
+
+.output p {
+	display: inline-block;
+	margin-right: 1em;
+	font-size: 1.1em;
+}
+
+.disclaimer p {
+	font-size: 0.8em;
+	text-align: center;
+}
+/*
+.disclaimer {
+	margin-right: auto;
+	margin-left: auto;
+	width: 100%;
+
+}*/
 
 .bane {
 	background-color: black;
 	color: white;
+	border: none;
 }
 
 .row {
@@ -94,12 +125,6 @@ label {
 }
 */
 
-.column-content {
-	height: 100%;
-	width: 100%;
-	padding: 0em;
-}
-
 .col-1 {
     width: 20%;
 }
@@ -120,3 +145,41 @@ label {
     width: 100%;
 }
 
+@media all and (max-width: 800px) {
+	
+	label{
+		display: inline;
+		text-align: left;
+	}
+
+	input {
+		text-align: left;
+		margin-right: .5em;
+	}
+
+
+	.sets div {
+		margin-left: 0;
+		width: 100%;
+		text-align: left;
+	}
+
+	.col-1 + .col-1 {
+		margin-top: 1em; 
+	}
+
+	.col-1{ width: 100%;    }
+    .col-2{ width: 100%;        }
+    .col-3{ width: 100%;    }
+    .col-4{ width: 100%;    }
+    .col-5{ width: 100%;    }
+    .col-6{ width: 100%;      }
+
+    .row .col-2:last-of-type{
+        width: 100%; 
+    }
+
+    .row .col-5 ~ .col-1{
+        width: 100%; 
+    }
+}

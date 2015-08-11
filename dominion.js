@@ -1,7 +1,20 @@
 (function() {
 	'use strict';
 
-	handler();
+	if($(window).width() < 800) { //mobile
+			mobileWrap();
+	} 
+
+	$(window).resize(function(){
+		if($(window).width() < 800) { //mobile
+			mobileWrap();
+		} else {
+			mobileUnwrap();
+		}
+	});
+
+
+	eventHandler();
 
 	var cardList = {
 		'base' : ['Cellar', 'Chapel', 'Moat', 'Chancellor', 'Village', 'Woodcutter', 'Workshop', 
@@ -57,14 +70,50 @@
 		'promo' : ['Envoy', 'Black Market', 'Stash', 'Walled Village', 'Governor', 'Prince']
 	}
 
-	function handler() {
+	var attackCards = ['Bureaucrat', 'Militia', 'Spy', 'Thief', 'Witch', 'Swindler', 'Minion', 'Saboteur',
+				'Torturer', 'Ambassador', 'Cutpurse', 'Pirate Ship', 'Sea Hag', 'Ghost Ship', 'Scrying Pool',
+				'Familiar', 'Mountebank', 'Rabble', 'Goons', 'Fortune Teller', 'Young Witch', 'Jester',
+				'Followers', 'Oracle', 'Noble Brigand', 'Margrave', 'Urchin', 'Mercenary', 'Marauder',
+				'Cultist', 'Knights', 'Pillage', 'Rogue', 'Taxman', 'Soothsayer', 'Warrior', 'Solider',
+				'Bridge Troll', 'Giant', 'Haunted Woods', 'Swamp Hag', 'Relic'];
+
+		
+	function mobileWrap() {
+		$('.sets label').wrap('<div></div>');
+	}
+
+	function mobileUnwrap() {
+		$('.sets div label').unwrap();
+	}
+
+
+
+	function eventHandler() {
+		
+		$('input[value="all"]').change(function(){
+			if(this.checked) {
+				$('.sets input').prop('checked', true);				
+			} else {
+				$('.sets input').not('[value="base"]').prop('checked', false);
+			}
+		});
+
+
 		$('.get-cards').click(function() {
-			console.log(canRun());
+			
 			if( canRun() ) {
 				console.log('true yo');
 				var sets = getSets();
 				var cards = getCards(sets);
-				outputCards(cards);				
+				
+				if($(window).width() >= 800) {
+					
+					mobileOutput(cards);
+					// outputCards(cards);					
+				} else {
+					mobileOutput(cards);
+				}
+
 			} else {
 				
 				var msg = $('<p>');
@@ -79,7 +128,7 @@
 	function canRun() {
 		var selected = false;
 
-		$('input[type="checkbox"]').each(function() {
+		$('.sets input[type="checkbox"]').each(function() {
 			if(this.checked) {
 				console.log(this);
 				selected = true;
@@ -91,11 +140,13 @@
 
 	function getSets() {
 		var setsToUse = [];
+		console.log('selected: ', setsToUse);
 
-		$('input[type="checkbox"]').each(function() {
+		$('.sets input[type="checkbox"]').not('[value="all"]').each(function() {
 			
 			if(this.checked) {
 				var set = this.value;
+				console.log('value: ', this.value);
 				setsToUse = setsToUse.concat(cardList[set]);				
 			}
 		});
@@ -109,15 +160,40 @@
 			"bane": null
 		};
 
+		console.log('moat: ', $('input[name="moat"]')[0].checked);
+
 		for(var i = 0; i < 10; i++) {
 			var card = getRandom(sets);
-			console.log('card is ', card);
+			console.log('card ', i, 'is ', card);
 			while(cardsToUse.kingdom.indexOf(card) > -1) {
 				console.log('draw new card');
 				card = getRandom(sets);
 			}
+
+
+			//Add Moat if attack cards in supply
+			if( $('input[name="moat"]')[0].checked ) {
+					
+				if(cardsToUse.kingdom.indexOf('Moat') == -1) {
+					
+					if(attackCards.indexOf(card) > -1 ) {
+						console.log('we have an attack card: ', card);
+
+						if(i == 9) {
+							while(attackCards.indexOf(card) > -1) {
+								card = getRandom(sets);
+							}
+						} else {
+							cardsToUse.kingdom.push('Moat');
+							i++;
+						}
+					}					
+				}
+			}
+			
 			cardsToUse.kingdom.push(card);
 		}
+
 
 		//Check if bane card needed
 		if(cardsToUse.kingdom.indexOf('Young Witch') > -1) {
@@ -135,9 +211,12 @@
 	function outputCards(cards) {
 		clearOutputArea();
 
-		var output = '<div class="row">';
+		var output = '<h2>Kingdom Cards</h2>';
+		output += '<div class="row">';
 		for(var i = 0; i < cards.kingdom.length; i++) {
 			var card = '<div class="col-1"><div class="card"><p>' + cards.kingdom[i] + '</p></div></div>';
+
+
 			
 			//new row after 5 cards
 			if(i == 4) {
@@ -149,9 +228,12 @@
 
 		//ADD BANE PILE
 		if(cards.bane) {
-			var bane = '<div class="col-1"><div class="card bane"><p>Bane</p></div></div>' +
-						'<div class="col-1"><div class="card"><p>' + cards.bane + '</p></div></div>';
+			var bane = '<div class="col-1"><div class="card"><p>' + cards.bane + '</p></div></div>';
 
+			// var bane = '<div class="col-1"><div class="card bane"><p>Bane</p></div></div>' +
+						// '<div class="col-1"><div class="card"><p>' + cards.bane + '</p></div></div>';
+
+			output += '<h2>Bane Card</h2>';
 			output += '<div class="row">' + bane + '</div>';
 		}
 
@@ -160,6 +242,24 @@
 		$('html, body').animate({
     		scrollTop: $('.output').offset().top
 		}, 1000);
+	}
+
+	function mobileOutput(cards) {
+		var output='<h2>Kingdom Cards</h2>';
+		for(var i = 0; i < cards.kingdom.length; i++) {
+			output += '<p>' + cards.kingdom[i] + '</p>';
+		}
+
+		if(cards.bane) {
+			output += '<h2>Bane Card</h2>';
+			output += '<p>' + cards.bane + '</p>'; 
+		}
+
+		$('.output').empty().append(output);
+
+		// $('html, body').animate({
+  //   		scrollTop: $('.output').offset().top
+		// }, 1000);
 	}
 
 	function clearOutputArea() {
