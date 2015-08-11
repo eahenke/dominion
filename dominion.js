@@ -1,3 +1,7 @@
+//Version 1.0
+
+//Add more options later
+
 (function() {
 	'use strict';
 
@@ -77,19 +81,20 @@
 				'Cultist', 'Knights', 'Pillage', 'Rogue', 'Taxman', 'Soothsayer', 'Warrior', 'Solider',
 				'Bridge Troll', 'Giant', 'Haunted Woods', 'Swamp Hag', 'Relic'];
 
-		
+	//Wraps labels in div so each appears on own line
 	function mobileWrap() {
 		$('.sets label').wrap('<div></div>');
 	}
 
+	//Unwraps labels when resized from small to large screen
 	function mobileUnwrap() {
 		$('.sets div label').unwrap();
 	}
 
-
-
+	//Attaches event handers to checkboxes and button
 	function eventHandler() {
-		
+
+		//Check all checkboxes		
 		$('input[value="all"]').change(function(){
 			if(this.checked) {
 				$('.sets input').prop('checked', true);				
@@ -98,86 +103,68 @@
 			}
 		});
 
-
+		//Get kingdom cards on button click
 		$('.get-cards').click(function() {
 			
-			if( canRun() ) {
-				console.log('true yo');
+			if( canRun() ) { //At least one checkbox selected
 				var sets = getSets();
 				var cards = getCards(sets);
-				
-				if($(window).width() >= 800) {
-					
-					mobileOutput(cards);
-					// outputCards(cards);					
-				} else {
-					mobileOutput(cards);
-				}
+				outputCards(cards);
 
-			} else {
-				
+			} else { //No checkboxes checked				
 				var msg = $('<p>');
 				msg.text('Please select at least one set.');
-
 				$('.output').empty().append(msg);
 			}
 
 		});
 	}
 
+	//Checks that at least one set checkbox is checked
 	function canRun() {
 		var selected = false;
 
 		$('.sets input[type="checkbox"]').each(function() {
 			if(this.checked) {
-				console.log(this);
 				selected = true;
-				console.log(selected);
 			} 
 		});
 		return selected;
 	}
 
+	//Returns cards in the selected sets
 	function getSets() {
 		var setsToUse = [];
-		console.log('selected: ', setsToUse);
 
 		$('.sets input[type="checkbox"]').not('[value="all"]').each(function() {
 			
 			if(this.checked) {
 				var set = this.value;
-				console.log('value: ', this.value);
 				setsToUse = setsToUse.concat(cardList[set]);				
 			}
 		});
-		console.log('sets: ', setsToUse);
-		return setsToUse;		
+		return setsToUse;
 	}
 
+	//Gets 10 random kingdom cards from the chosen sets
 	function getCards(sets) {
 		var cardsToUse = {
 			"kingdom" : [],
 			"bane": null
 		};
 
-		console.log('moat: ', $('input[name="moat"]')[0].checked);
-
 		for(var i = 0; i < 10; i++) {
 			var card = getRandom(sets);
-			console.log('card ', i, 'is ', card);
 			while(cardsToUse.kingdom.indexOf(card) > -1) {
-				console.log('draw new card');
 				card = getRandom(sets);
 			}
 
-
 			//Add Moat if attack cards in supply
-			if( $('input[name="moat"]')[0].checked ) {
+			if( $('input[value="moat"]')[0].checked ) {
 					
 				if(cardsToUse.kingdom.indexOf('Moat') == -1) {
 					
 					if(attackCards.indexOf(card) > -1 ) {
-						console.log('we have an attack card: ', card);
 
 						if(i == 9) {
 							while(attackCards.indexOf(card) > -1) {
@@ -189,13 +176,12 @@
 						}
 					}					
 				}
-			}
-			
+			}			
 			cardsToUse.kingdom.push(card);
 		}
 
 
-		//Check if bane card needed
+		//Add bane if Young Witch in supply
 		if(cardsToUse.kingdom.indexOf('Young Witch') > -1) {
 			var bane = getRandom(sets);
 			while(cardsToUse.kingdom.indexOf(bane) > -1) {
@@ -203,48 +189,11 @@
 			}
 			cardsToUse.bane = bane;
 		}
-		console.log(cardsToUse);
-
 		return cardsToUse;
 	}
-
+	
+	//Print kingdom cards/bane card
 	function outputCards(cards) {
-		clearOutputArea();
-
-		var output = '<h2>Kingdom Cards</h2>';
-		output += '<div class="row">';
-		for(var i = 0; i < cards.kingdom.length; i++) {
-			var card = '<div class="col-1"><div class="card"><p>' + cards.kingdom[i] + '</p></div></div>';
-
-
-			
-			//new row after 5 cards
-			if(i == 4) {
-				card += '</div><div class="row">';
-			}
-			output += card;
-		}
-		output += '</div>'; //end row
-
-		//ADD BANE PILE
-		if(cards.bane) {
-			var bane = '<div class="col-1"><div class="card"><p>' + cards.bane + '</p></div></div>';
-
-			// var bane = '<div class="col-1"><div class="card bane"><p>Bane</p></div></div>' +
-						// '<div class="col-1"><div class="card"><p>' + cards.bane + '</p></div></div>';
-
-			output += '<h2>Bane Card</h2>';
-			output += '<div class="row">' + bane + '</div>';
-		}
-
-		$('.output').append(output);
-
-		$('html, body').animate({
-    		scrollTop: $('.output').offset().top
-		}, 1000);
-	}
-
-	function mobileOutput(cards) {
 		var output='<h2>Kingdom Cards</h2>';
 		for(var i = 0; i < cards.kingdom.length; i++) {
 			output += '<p>' + cards.kingdom[i] + '</p>';
@@ -256,16 +205,9 @@
 		}
 
 		$('.output').empty().append(output);
-
-		// $('html, body').animate({
-  //   		scrollTop: $('.output').offset().top
-		// }, 1000);
 	}
 
-	function clearOutputArea() {
-		$('.output').empty();
-	}
-
+	//Get random item from array
 	function getRandom(items) {
 		var item = items[Math.floor(Math.random() * items.length)];
 		return item;
