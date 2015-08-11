@@ -54,24 +54,6 @@ label span {
 	font-style: italic;
 }
 
-/*.card {
-	height: 200px;
-	border-radius: 5px;
-	border: 2px solid blue;	
-}
-
-.card p {
-
-	position: relative;
-	top: 50%;
-	transform: translateY(-50%);
-	
-	text-align: center;
-	margin: 0;
-
-	font-size: 1.5em;
-}*/
-
 .output {
 	min-height: 250px;
 }
@@ -86,100 +68,28 @@ label span {
 	font-size: 0.8em;
 	text-align: center;
 }
-/*
-.disclaimer {
-	margin-right: auto;
-	margin-left: auto;
-	width: 100%;
 
-}*/
 
-.bane {
-	background-color: black;
-	color: white;
-	border: none;
-}
-
-.row {
-	margin-top: 1em;
-	min-height: 1px;
-	overflow: hidden;
-	margin-left: 1.5em;
-}
-
-.row:before, .row:after {
-	content: "";
-	display: table;
-	clear: both;
-}
-
-[class*='col-'] {
-	float: left;
-	min-height: 1px;
-	padding-right: 1.5em;
-}
-
-/*
-[class*='col-']:last-of-type {
-	padding-right: 0;
-}
-*/
-
-.col-1 {
-    width: 20%;
-}
-
-.col-2 {
-    width: 40%;
-}
-
-.col-3 {
-    width: 60%;
-}
-
-.col-4 {
-    width: 80%;
-}
-
-.col-5 {
-    width: 100%;
-}
 
 @media all and (max-width: 800px) {
 	
-	label{
-		display: inline;
-		text-align: left;
-	}
-
 	input {
 		text-align: left;
 		margin-right: .5em;
 	}
 
+	label{
+		display: inline;
+		text-align: left;
+	}
+
+	.output p {
+		display: block;
+	}
 
 	.sets div {
 		margin-left: 0;
 		width: 100%;
 		text-align: left;
 	}
-
-	.col-1 + .col-1 {
-		margin-top: 1em; 
-	}
-
-	.col-1{ width: 100%;    }
-    .col-2{ width: 100%;        }
-    .col-3{ width: 100%;    }
-    .col-4{ width: 100%;    }
-    .col-5{ width: 100%;    }
-    .col-6{ width: 100%;      }
-
-    .row .col-2:last-of-type{
-        width: 100%; 
-    }
-
-    .row .col-5 ~ .col-1{
-        width: 100%; 
-    }
 }
