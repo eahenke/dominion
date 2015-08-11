@@ -83,7 +83,7 @@ label span {
 		text-align: left;
 	}
 
-	output p {
+	.output p {
 		display: block;
 	}
 
