@@ -35,7 +35,11 @@ var sets = {
 		name : "Guilds",
 		releaseDate : "",
 	},
-	10 : {
+	10: {
+		name : "Adventures",
+		releaseDate : "4/2015",
+	},
+	11 : {
 		name : "Promo",
 		releaseDate : "3/2009",
 	}
@@ -1740,9 +1744,22 @@ var cards = [
 		cost : 5,
 		description : "Gain a Gold. Each other player gains a Curse. Each player who did draws a card.",
 	},
+
+	{
+		name : "Merchant Guild",
+		setID : 10,
+		isAction : true,
+		cost : 5,
+		coins : 1,
+		buys : 1,
+		description : "While this is in play, when you buy a card, take a Coin token.",
+	},
+
+
+
 	{
 		name : "Black Market",
-		setID : 10,
+		setid: 11,
 		isAction : true,
 		cost : 3,
 		coins : 2,
@@ -1750,7 +1767,7 @@ var cards = [
 	},
 	{
 		name : "Envoy",
-		setID : 10,
+		setid: 11,
 		isAction : true,
 		cost : 4,
 		description : "Reveal the top 5 cards of your deck. The player to the left chooses one for you to discard. Draw the rest.",

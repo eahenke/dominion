@@ -17,26 +17,6 @@
 		}
 	});
 
-
-	console.log(cardsByName['Market']);
-
-	// var market = {
-	// 	name : "Market",
-	// 	setID : 1,
-	// 	isAction : true,
-	// 	cost : 5,
-	// 	cards : 1,
-	// 	actions : 1,
-	// 	coins : 1,
-	// 	buys : 1,
-	// 	description : "",
-	// }
-
-
-
-
-
-
 	function Kingdom() {
 		this.cards = [];
 		this.bane = null;
@@ -98,7 +78,7 @@
 	}
 
 	Kingdom.prototype.checkRequirements = function(card, set) {
-		console.log('considering: ', card.name);
+		//console.log('considering: ', card.name);
 
 		for(var prop in this.requirements) {
 			
@@ -106,15 +86,6 @@
 
 			//If a requirement is true and not yet fulfilled
 			if(this.requirements[prop] && !this.hasType(prop)) {
-			
-
-				//TESTING METHOD  - NEED TO MOVE TO BETTER PLACE
-				if(set) {
-					if(!setHasType(set, prop)) {
-						console.log('IMPOSSIBLE TO FULFILL REQUIREMENTS');
-					}
-					
-				}
 
 				if(!fulfillsRequirement(card, prop)) {
 					return false;
@@ -150,10 +121,10 @@
 		var self = this;
 		this.resetKingdom();
 		this.getRequirements();
-		console.log(kingdom);
+		//console.log(kingdom);
 
 		if(self.setList.length < 10) {
-			console.log('setlist too short');
+			//console.log('setlist too short');
 			return false;
 		}
 
@@ -167,16 +138,16 @@
 		if(reqs.length) {
 			valid = reqs.every(function(property){
 				return self.setList.some(function(el){
-					console.log('el is ', el);
-					if(el[property]) {
-						console.log(el.name, 'fills req ', property);
+					//console.log('el is ', el);
+					if( fulfillsRequirement(el, property)) {
+						//console.log(el.name, 'fills req ', property);
 						return true;
 					}
 					
 				});
 			});
 		}
-		console.log('deck is ' + valid);
+		//console.log('deck is ' + valid);
 		return valid;			
 								
 	}
@@ -223,7 +194,7 @@
 
 	var kingdom = new Kingdom();
 
-
+	/*
 	var requirements = {
 		card : {
 			isNew: true,
@@ -238,6 +209,7 @@
 			moat: false,
 		}
 	}
+	*/
 
 	eventHandler();
 
@@ -327,9 +299,29 @@
 			}
 		});
 
+
+		//Check if button should be active/inactive
+		$('input[type="checkbox"]').change(function() {
+			var button = $('button');
+			var anyChecked = canRun();
+
+			
+
+			if(!anyChecked) {
+				button.addClass('inactive');
+				button.removeClass('active');
+			} else {
+				button.removeClass('inactive');
+				button.addClass('active');
+				
+			}
+
+		})
+
 		//Get kingdom cards on button click
 		$('.get-cards').click(function() {
-			
+			//console.log('running by why');
+
 			if( canRun() ) { //At least one checkbox selected
 				kingdom.setList = kingdom.addSetList();
 				
@@ -338,16 +330,15 @@
 								
 					outputKingdom();
 
-				}
-
-				
+				} else { //Sets unable to fulfill requirements
+					$('button').addClass('inactive');	
+					errorMsg('Sorry, unable to satisfy all the selected options with the selected sets.  Try different sets or different options.');
+				}				
 
 			} else { //No checkboxes checked				
-				var msg = $('<p>');
-				msg.text('Please select at least one set.');
-				$('.output').empty().append(msg);
+				$('button').addClass('inactive');
+				errorMsg('Please select at least one set.');
 			}
-
 		});
 	}
 
@@ -452,7 +443,7 @@
 		for(var set in sets) {
 			//console.log(sets[set]);
 			if(sets[set].name.toLowerCase() == name.toLowerCase()) {
-				console.log('returning ', set);
+				//console.log('returning ', set);
 				return set;
 			}
 		}
@@ -468,7 +459,7 @@
 	}
 
 	function pullCardsBySet(set) {
-		console.log(set);
+		//console.log(set);
 		var cardsInSet = [];
 
 		for(var i = 0; i < cards.length; i++) { //run backwards for speed?
@@ -518,7 +509,10 @@
 			//passing the set is to check if the set has the required cards - maybe should do earlier?
 			while(!kingdom.checkRequirements(card, cardsToSearch)) {
 				remove(card, cardsToSearch);
+				//console.log('cardsToSearch.length = ', cardsToSearch.length);
+
 				card = getRandom(cardsToSearch);
+				//console.log('new card, passing ' + card.name);
 			}
 
 			//TESTING LOGS
@@ -533,18 +527,19 @@
 					
 					//Add moat if there's room
 					if(kingdom.cards.length < 9) {
-						console.log('attack card, must add moat');
+						//console.log('attack card, must add moat');
 						kingdom.addCard(cardsByName['Moat']);
 						
 					} else { //If its the last card and no moat, draw another non-attack
 						while(card['isAttack']) {
-							console.log('last is attack, redraw');
+							//console.log('last is attack, redraw');
 							card = getRandom(setList);
 						}
 					}
 
 				}
 			}
+			//console.log('adding ' + card.name);
 			kingdom.addCard(card);			
 		}
 		
@@ -608,9 +603,9 @@
 		for(var prop in kingdom.requirements) {
 
 			if(kingdom.requirements[prop] && !kingdom.hasType(prop)) {
-				console.log('requirement true: ', prop);
-				console.log('kingdom has type: ', kingdom.hasType(prop));
-				console.log('Deck not valid, missing: ', prop);
+				//console.log('requirement true: ', prop);
+				//console.log('kingdom has type: ', kingdom.hasType(prop));
+				//console.log('Deck not valid, missing: ', prop);
 			}
 		} 
 	}
@@ -621,6 +616,12 @@
 		if(index > -1) {
 			array.splice(index, 1);
 		}
+	}
+
+	function errorMsg(error) {
+		var msg = $('<p>');
+		msg.text(error);
+		$('.output').empty().append(msg);
 	}
 
 
