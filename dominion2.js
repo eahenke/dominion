@@ -192,6 +192,28 @@
 		kingdom.bane = bane;
 	}
 
+	Kingdom.prototype.generateKingdom = function() {
+		console.log('GENERATING');
+		var button = $('button');
+		if( canRun() ) { //At least one checkbox selected
+				this.setList = kingdom.addSetList();
+				
+				if(this.validateSetList()) {
+					getCards2(this.setList);
+								
+					outputKingdom();
+
+				} else { //Sets unable to fulfill requirements
+					activateButton(false);
+					errorMsg('Sorry, unable to satisfy all the selected options with the selected sets.  Try different sets or different options.');
+				}				
+
+			} else { //No checkboxes checked				
+				activateButton(false);
+				errorMsg('Please select at least one set.');
+			}		
+	}
+
 	var kingdom = new Kingdom();
 
 	/*
@@ -211,7 +233,7 @@
 	}
 	*/
 
-	eventHandler();
+	assignEvents();
 
 	/*
 	var cardList = {
@@ -288,7 +310,8 @@
 	}
 
 	//Attaches event handers to checkboxes and button
-	function eventHandler() {
+	function assignEvents() {
+		activateButton(true);
 
 		//Check all checkboxes		
 		$('input[value="all"]').change(function(){
@@ -303,43 +326,57 @@
 		//Check if button should be active/inactive
 		$('input[type="checkbox"]').change(function() {
 			var button = $('button');
-			var anyChecked = canRun();
-
-			
+			var anyChecked = canRun();			
 
 			if(!anyChecked) {
-				button.addClass('inactive');
-				button.removeClass('active');
+				activateButton(false);
+				// console.log('inactivating button!');
+				// button.addClass('inactive');
+				// button.removeClass('active');
+				// errorMsg('Please select at least one set.');
 			} else {
-				button.removeClass('inactive');
-				button.addClass('active');
-				
-			}
 
-		})
-
-		//Get kingdom cards on button click
-		$('.get-cards').click(function() {
-			//console.log('running by why');
-
-			if( canRun() ) { //At least one checkbox selected
-				kingdom.setList = kingdom.addSetList();
-				
-				if(kingdom.validateSetList()) {
-					getCards2(kingdom.setList);
-								
-					outputKingdom();
-
-				} else { //Sets unable to fulfill requirements
-					$('button').addClass('inactive');	
-					errorMsg('Sorry, unable to satisfy all the selected options with the selected sets.  Try different sets or different options.');
-				}				
-
-			} else { //No checkboxes checked				
-				$('button').addClass('inactive');
-				errorMsg('Please select at least one set.');
+				activateButton(true);
+				// console.log('ACTIVATING button!');
+				// $('.output').empty();
+				// button.removeClass('inactive');
+				// button.addClass('active');				
 			}
 		});
+	}
+
+	function assignButton() {
+		//Get kingdom cards on button click
+		$('.get-cards.active').click(function() {
+			console.log('running by why');
+			kingdom.generateKingdom();
+			
+		});
+		
+	}
+
+	function activateButton(bool) {
+		var button = $('button');
+		if(bool) {
+			
+			if(button.hasClass('inactive')) {
+				$('.output').empty();
+			}
+
+			button.removeClass('inactive');
+			button.addClass('active');
+
+
+			
+			
+		} else {
+			
+			button.addClass('inactive');
+			button.removeClass('active');
+			button.off();
+			errorMsg('Please select at least one set.');
+		}
+		assignButton();
 	}
 
 	//Checks that at least one set checkbox is checked
