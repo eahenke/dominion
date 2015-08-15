@@ -1,6 +1,7 @@
-//Version 1.0
+//Version 2.0
 
 //Add more options later
+//Alchemy limits, include trashers, exclude alt-vp cards
 
 (function() {
 	'use strict';
@@ -16,6 +17,12 @@
 			mobileUnwrap();
 		}
 	});
+	
+
+	var kingdom = new Kingdom();
+	assignEvents();
+
+
 
 	function Kingdom() {
 		this.cards = [];
@@ -195,7 +202,7 @@
 	Kingdom.prototype.generateKingdom = function() {
 		console.log('GENERATING');
 		var button = $('button');
-		if( canRun() ) { //At least one checkbox selected
+		if( anyChecked() ) { //At least one checkbox selected
 				this.setList = kingdom.addSetList();
 				
 				if(this.validateSetList()) {
@@ -214,90 +221,6 @@
 			}		
 	}
 
-	var kingdom = new Kingdom();
-
-	/*
-	var requirements = {
-		card : {
-			isNew: true,
-		},
-
-		deck : {
-			bane: false,
-			actions: false,
-			cards: false,
-			buys: false,
-			coins: false,
-			moat: false,
-		}
-	}
-	*/
-
-	assignEvents();
-
-	/*
-	var cardList = {
-		'base' : ['Cellar', 'Chapel', 'Moat', 'Chancellor', 'Village', 'Woodcutter', 'Workshop', 
-				'Bureaucrat', 'Feast', 'Gardens', 'Militia', 'Moneylender', 'Remodel', 'Smithy', 'Spy',
-				'Thief', 'Throne Room', 'Council Room', 'Festival', 'Laboratory', 'Library', 'Market', 'Mine',
-				'Witch', 'Adventurer'],
-
-		'intrigue' : ['Courtyard', 'Pawn', 'Secret Chamber', 'Great Hall', 'Masquerade', 'Shanty Town', 
-					'Steward', 'Swindler', 'Wishing Well', 'Baron', 'Bridge', 'Conspirator', 'Coppersmith',
-					'Ironworks', 'Mining Village', 'Scout', 'Duke', 'Minion', 'Saboteur', 'Torturer', 
-					'Trading Post', 'Tribute', 'Upgrade', 'Harem','Nobles'],
-
-		'seaside' : ['Embargo', 'Haven', 'Lighthouse', 'Native Village', 'Pearl Diver', 'Ambassador',
-					'Fishing Village', 'Lookout', 'Smugglers', 'Warehouse', 'Caravan', 'Cutpurse',
-					'Island', 'Navigator', 'Pirate Ship', 'Salvager', 'Sea Hag', 'Treasure Map', 
-					'Bazaar', 'Explorer', 'Ghost Ship', 'Merchant Ship', 'Outpost', 'Tactician', 'Treasury',
-					'Wharf'],
-
-		'alchemy' : ['Herbalist', 'Apprentice', 'Transmute', 'Vineyard', 'Apothecary', 'Scrying Pool',
-					'University', 'Alchemist', 'Familiar', 'Philosopher\'s Stone', 'Golem', 'Possession'],
-
-		'prosperity' : ['Loan', 'Trade Route', 'Watchtower', 'Bishop', 'Monument', 'Quarry', 'Talisman',
-						'Worker\'s Village', 'City', 'Contraband', 'Counting House', 'Mint', 'Mountebank',
-						'Rabble', 'Royal Seal', 'Vault', 'Venture', 'Goons', 'Grand Market', 'Hoard', 'Bank',
-						'Expand', 'Forge', 'King\'s Court', 'Peddler'],
-
-		'cornucopia' : ['Hamlet', 'Fortune Teller', 'Menagerie', 'Farming Village', 'Horse Traders', 'Remake', 
-						'Tournament', 'Young Witch', 'Harvest', 'Horn of Plenty', 'Hunting Party', 'Jester',
-						'Fairgrounds'],
-
-		'hinterlands' : ['Crossroads', 'Duchess', 'Fool\'s Gold', 'Develop', 'Oasis', 'Oracle', 'Scheme', 
-						'Tunnel', 'Jack of all Trades', 'Noble Brigand', 'Nomad Camp', 'Silk Road', 
-						'Spice Merchant', 'Trader', 'Cache', 'Cartographer', 'Embassy', 'Haggler', 'Highway', 
-						'Ill-Gotten Gains', 'Inn', 'Mandarin', 'Margrave', 'Stables', 'Border Village',
-						 'Farmland'],
-
-		'dark ages' : ['Poor House', 'Beggar', 'Squire', 'Vagrant', 'Forager', 'Hermit', 'Market Square', 
-						'Sage', 'Storeroom', 'Urchin', 'Armory', 'Death Cart', 'Feodum', 'Fortress', 
-						'Ironmonger', 'Marauder', 'Procession', 'Rats', 'Scavenger', 'Wandering Minstrel', 
-						'Band of Misfits', 'Bandit Camp', 'Catacombs', 'Count', 'Counterfeit', 'Cultist', 
-						'Graverobber', 'Junk Dealer', 'Knights', 'Mystic', 'Pillage', 'Rebuild', 'Rogue', 
-						'Altar', 'Hunting Grounds'],
-
-		'guilds' : ['Candlestick Maker', 'Stonemason', 'Doctor', 'Masterpiece', 'Advisor', 'Plaza', 'Taxman', 
-					'Herald', 'Baker', 'Butcher', 'Journeyman', 'Merchant Guild', 'Soothsayer'],
-
-		'adventures' : ['Coin of the Realm', 'Page', 'Peasant', 'Ratcatcher', 'Raze', 'Amulet', 'Caravan Guard',
-						'Dungeon', 'Gear', 'Guide', 'Duplicate', 'Magpie', 'Messenger', 'Miser', 'Port', 'Ranger',
-						'Transmogrify', 'Artificer', 'Bridge Troll', 'Distant Lands', 'Giant', 'Haunted Woods',
-						'Lost City', 'Relic', 'Royal Carriage', 'Storyteller', 'Swamp Hag', 'Treasure Trove',
-						' Wine Merchant', 'Hireling'],
-
-		'promo' : ['Envoy', 'Black Market', 'Stash', 'Walled Village', 'Governor', 'Prince']
-	}
-
-	var attackCards = ['Bureaucrat', 'Militia', 'Spy', 'Thief', 'Witch', 'Swindler', 'Minion', 'Saboteur',
-				'Torturer', 'Ambassador', 'Cutpurse', 'Pirate Ship', 'Sea Hag', 'Ghost Ship', 'Scrying Pool',
-				'Familiar', 'Mountebank', 'Rabble', 'Goons', 'Fortune Teller', 'Young Witch', 'Jester',
-				'Followers', 'Oracle', 'Noble Brigand', 'Margrave', 'Urchin', 'Mercenary', 'Marauder',
-				'Cultist', 'Knights', 'Pillage', 'Rogue', 'Taxman', 'Soothsayer', 'Warrior', 'Solider',
-				'Bridge Troll', 'Giant', 'Haunted Woods', 'Swamp Hag', 'Relic'];
-
-	*/
 
 	//Wraps labels in div so each appears on own line
 	function mobileWrap() {
@@ -325,27 +248,17 @@
 
 		//Check if button should be active/inactive
 		$('input[type="checkbox"]').change(function() {
-			var button = $('button');
-			var anyChecked = canRun();			
-
-			if(!anyChecked) {
+			if(!anyChecked()) {
 				activateButton(false);
-				// console.log('inactivating button!');
-				// button.addClass('inactive');
-				// button.removeClass('active');
-				// errorMsg('Please select at least one set.');
+				
 			} else {
-
-				activateButton(true);
-				// console.log('ACTIVATING button!');
-				// $('.output').empty();
-				// button.removeClass('inactive');
-				// button.addClass('active');				
+				activateButton(true);				
 			}
 		});
 	}
 
 	function assignButton() {
+		
 		//Get kingdom cards on button click
 		$('.get-cards.active').click(function() {
 			console.log('running by why');
@@ -376,11 +289,13 @@
 			button.off();
 			errorMsg('Please select at least one set.');
 		}
+		button[0].disabled = !bool;
+		// alert(button[0].disabled);
 		assignButton();
 	}
 
 	//Checks that at least one set checkbox is checked
-	function canRun() {
+	function anyChecked() {
 		var selected = false;
 
 		$('.sets input[type="checkbox"]').each(function() {
