@@ -361,12 +361,12 @@
 
 	//Wraps labels in div so each appears on own line
 	function mobileWrap() {
-		$('.sets label').wrap('<div></div>');
+		$('.sets label, .require label').wrap('<div></div>');
 	}
 
 	//Unwraps labels when resized from small to large screen
 	function mobileUnwrap() {
-		$('.sets div label').unwrap();
+		$('.sets div label, .require label').unwrap();
 	}
 
 

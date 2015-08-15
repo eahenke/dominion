@@ -66,7 +66,7 @@ button:focus {
 label {
 	width: 25%;
 	margin-right: 20px;
-	font-size: 1.3em;
+	font-size: 1.3rem;
 	text-align: center;
 }
 
@@ -83,6 +83,10 @@ label span {
 	display: inline-block;
 	margin-right: 1em;
 	font-size: 1.1em;
+}
+
+.require {
+	font-size: 1.3em;
 }
 
 .disclaimer p {
