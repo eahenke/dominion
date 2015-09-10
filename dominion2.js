@@ -186,7 +186,6 @@
 				
 		} else {
 			if(card[type]) {
-				console.log(card.name + ' fulfills req ' + type);
 				return true;
 			}
 		}
