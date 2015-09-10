@@ -54,6 +54,7 @@
 			buys: false,
 			cards: false,
 			coins: false,
+			isTrasher: false,
 		}
 
 		this.specReq = {
@@ -185,6 +186,7 @@
 				
 		} else {
 			if(card[type]) {
+				console.log(card.name + ' fulfills req ' + type);
 				return true;
 			}
 		}
