@@ -1,10 +1,10 @@
-//Version 2.0
+//Version 2.1.1
 
 
 //Next up: show unmeetable requirements in red when !validateSetList
 
 //Add more options later
-//Alchemy limits, include trashers, exclude alt-vp cards
+//Alchemy limits, include/exclude alt-vp cards
 
 (function() {
 	'use strict';
@@ -283,12 +283,12 @@
 		for(var i = 0; i < cards.length; i++) { //run backwards for speed?
 			var card = cards[i];
 			
-			if(card.setID == set) {
+			if(card.setID == set && !card['excludeFromSupply']) {
 				cardsInSet.push(card);
 			}
 
 			//Cards object has cards in set order, don't loop through whole thing once you've passed your set
-			if(card.setID > set) {		
+			if(card.setID > set) {
 				return cardsInSet;
 			}
 		}		
