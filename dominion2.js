@@ -1,10 +1,10 @@
-//Version 2.0
+//Version 2.1.1
 
 
 //Next up: show unmeetable requirements in red when !validateSetList
 
 //Add more options later
-//Alchemy limits, include trashers, exclude alt-vp cards
+//Alchemy limits, include/exclude alt-vp cards
 
 (function() {
 	'use strict';
@@ -54,7 +54,9 @@
 			buys: false,
 			cards: false,
 			coins: false,
+			isCurser: false,
 			isTrasher: false,
+
 		}
 
 		this.specReq = {
@@ -86,7 +88,28 @@
 
 	//Add a bane card
 	Kingdom.prototype.addBane =function() {
-		var bane = getRandom(this.setList);			
+		var potentialBaneCards = [];
+		for(var i = 0; i < this.setList.length; i++) {
+			var card = this.setList[i];
+			if(card['cost'] == 2 || card['cost'] == 3) {
+				potentialBaneCards.push(card);
+			}
+		}
+
+		//If there's no 2 or 3 cost cards left, take one from kingdom cards and replace with random
+		if(!potentialBaneCards.length) {
+			for(var i = 0; i < this.cards.length; i++) {
+				var card = this.cards[i];
+				if(card['cost'] == 2 || card['cost'] == 3) {
+					potentialBaneCards.push(card);
+					remove(card, this.cards);	
+					this.cards.push(getRandom(this.setList));	
+					break;
+				}
+			}
+		}
+
+		var bane = getRandom(potentialBaneCards);
 		kingdom.bane = bane;
 	}
 
@@ -186,6 +209,7 @@
 				
 		} else {
 			if(card[type]) {
+				//console.log(card.name + ' fulfills req ' + type);
 				return true;
 			}
 		}
@@ -259,12 +283,12 @@
 		for(var i = 0; i < cards.length; i++) { //run backwards for speed?
 			var card = cards[i];
 			
-			if(card.setID == set) {
+			if(card.setID == set && !card['excludeFromSupply']) {
 				cardsInSet.push(card);
 			}
 
 			//Cards object has cards in set order, don't loop through whole thing once you've passed your set
-			if(card.setID > set) {		
+			if(card.setID > set) {
 				return cardsInSet;
 			}
 		}		
