@@ -54,7 +54,9 @@
 			buys: false,
 			cards: false,
 			coins: false,
+			isCurser: false,
 			isTrasher: false,
+
 		}
 
 		this.specReq = {
@@ -86,7 +88,28 @@
 
 	//Add a bane card
 	Kingdom.prototype.addBane =function() {
-		var bane = getRandom(this.setList);			
+		var potentialBaneCards = [];
+		for(var i = 0; i < this.setList.length; i++) {
+			var card = this.setList[i];
+			if(card['cost'] == 2 || card['cost'] == 3) {
+				potentialBaneCards.push(card);
+			}
+		}
+
+		//If there's no 2 or 3 cost cards left, take one from kingdom cards and replace with random
+		if(!potentialBaneCards.length) {
+			for(var i = 0; i < this.cards.length; i++) {
+				var card = this.cards[i];
+				if(card['cost'] == 2 || card['cost'] == 3) {
+					potentialBaneCards.push(card);
+					remove(card, this.cards);	
+					this.cards.push(getRandom(this.setList));	
+					break;
+				}
+			}
+		}
+
+		var bane = getRandom(potentialBaneCards);
 		kingdom.bane = bane;
 	}
 
@@ -186,6 +209,7 @@
 				
 		} else {
 			if(card[type]) {
+				//console.log(card.name + ' fulfills req ' + type);
 				return true;
 			}
 		}
