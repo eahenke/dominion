@@ -1,9 +1,11 @@
-//Version 2.1.1
+//Version 2.2.1
 
+//Added error message showing which requirements could not be met.
 
-//Next up: show unmeetable requirements in red when !validateSetList
+//BUG: When Chrome Dev Tools open in same window, requirement checkboxes become unresponsive
+//		Does not occur when opened as separate window.
 
-//Add more options later
+//NEXT
 //Alchemy limits, include/exclude alt-vp cards
 
 (function() {
@@ -66,6 +68,9 @@
 
 	//Main function, called on button click
 	Kingdom.prototype.generateKingdom = function() {
+		this.resetKingdom();
+		this.getRequirements();
+
 
 		if( anyChecked() ) { //At least one checkbox selected
 
@@ -165,10 +170,6 @@
 	Kingdom.prototype.chooseCards = function() {
 		this.cards = [];
 		this.bane = null;
-
-
-		this.resetKingdom();
-		this.getRequirements();
 
 		while(this.cards.length < 10) {
 			var card = getRandom(this.setList);
@@ -340,22 +341,9 @@
 		}
 	}
 
-	//Testing function, logs kingdom requirements and checks if any not met
-	Kingdom.prototype.validateDeck = function() {
-		for(var prop in this.requirements) {
-
-			if(this.requirements[prop] && !this.hasType(prop)) {
-				//console.log('requirement true: ', prop);
-				//console.log('kingdom has type: ', this.hasType(prop));
-				//console.log('Deck not valid, missing: ', prop);
-			}
-		} 
-	}
-
-
-	//Upcoming: show which requirements can't be fulfilled - push those to array and highlight in dom
 
 	//Check whether the selected sets are capable of fulfilling the selected requirements
+	//Returns object with result, any unmet requirements, and whether set(s) meets size requirement of 10 cards
 	Kingdom.prototype.validateSetList = function() {
 		var validObj = {
 			'result' : true,
@@ -364,9 +352,6 @@
 		}
 
 		var self = this;
-
-		self.resetKingdom();
-		self.getRequirements();
 		
 		if(self.setList.length < 10) {
 			validObj.result = false;
@@ -473,8 +458,6 @@
 			button.removeClass('inactive');
 			button.addClass('active');			
 			
-
-			//SOMETHING FISHY HERE - CALLED WHEN ONLY PROMO IS TAGGED 
 		} else {
 			
 			button.addClass('inactive');
@@ -533,8 +516,8 @@
 				'buys' : '+1 buy',
 				'cards' : '+2 cards',
 				'coins' : '+2 coins',
-				'isCurser' : 'cursers',
-				'isTrasher' : 'trashers',
+				'isCurser' : 'Cursers',
+				'isTrasher' : 'Trashers',
 			}			
 
 			for(var i = 0; i < list.length; i++) {
