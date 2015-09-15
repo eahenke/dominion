@@ -68,16 +68,22 @@
 	Kingdom.prototype.generateKingdom = function() {
 
 		if( anyChecked() ) { //At least one checkbox selected
-				this.setList = kingdom.addSetList();
+
+				this.setList = kingdom.addSetList();				
+				var setListTest = this.validateSetList();
 				
-				if(this.validateSetList()) {
-					this.chooseCards();
-								
+				if(setListTest.result) {
+					this.chooseCards();								
 					this.outputKingdom();
 
 				} else { //Sets unable to fulfill requirements
 					activateButton(false);
-					errorMsg('Sorry, unable to satisfy all the selected options with the selected sets.  Try different sets or different options.');
+
+					if(setListTest.reqSize) {
+						errorMsg('Sorry, unable to satisfy all the selected options with the selected sets.  Try different sets or different options.', setListTest.unmet);						
+					} else {
+						errorMsg('The selected sets do not have enough cards to create a supply.  Please choose additional sets.');
+					}
 				}				
 
 			} else { //No checkboxes checked				
@@ -157,13 +163,14 @@
 
 	//Choose ten random cards from setlist, test against requirements
 	Kingdom.prototype.chooseCards = function() {
-		kingdom.cards = [];
-		kingdom.bane = null;
+		this.cards = [];
+		this.bane = null;
 
-		kingdom.resetKingdom();
-		kingdom.getRequirements();
 
-		while(kingdom.cards.length < 10) {
+		this.resetKingdom();
+		this.getRequirements();
+
+		while(this.cards.length < 10) {
 			var card = getRandom(this.setList);
 
 			//copy the set list, to whittle down while searching without effecting setlist
@@ -220,6 +227,12 @@
 	//Gets kingdom requirements based on checkboxes
 	Kingdom.prototype.getRequirements = function() {
 		var self = this;
+
+		for(var req in self.requirements) {
+			self.requirements[req] = false;
+		}
+
+
 		$('.require input').each(function() {
 			if(this.checked) {
 				self.requirements[this.value] = true;
@@ -332,9 +345,9 @@
 		for(var prop in this.requirements) {
 
 			if(this.requirements[prop] && !this.hasType(prop)) {
-				console.log('requirement true: ', prop);
-				console.log('kingdom has type: ', this.hasType(prop));
-				console.log('Deck not valid, missing: ', prop);
+				//console.log('requirement true: ', prop);
+				//console.log('kingdom has type: ', this.hasType(prop));
+				//console.log('Deck not valid, missing: ', prop);
 			}
 		} 
 	}
@@ -344,40 +357,53 @@
 
 	//Check whether the selected sets are capable of fulfilling the selected requirements
 	Kingdom.prototype.validateSetList = function() {
-		var valid = true;
-		var self = this;
-		this.resetKingdom();
-		this.getRequirements();
-		
+		var validObj = {
+			'result' : true,
+			'unmet' : [],
+			'reqSize' : true,
+		}
 
+		var self = this;
+
+		self.resetKingdom();
+		self.getRequirements();
+		
 		if(self.setList.length < 10) {
-			return false;
+			validObj.result = false;
+			validObj.reqSize = false;
+			
 		}
 
 		//Make array of true requirements
 		var reqs = [];
-		for(var prop in this.requirements) {
-			if(this.requirements[prop]) {
+		for(var prop in self.requirements) {
+			if(self.requirements[prop]) {
 				reqs.push(prop);
 			}
 		}
 
 		//Return true if, for all requirements, any one card fills that requirement.
 		if(reqs.length) {
-			valid = reqs.every(function(property){
-				return self.setList.some(function(el){
+			
+
+			reqs.forEach(function(property) {
+
+				var possible = self.setList.some(function(card){
 					
-					if( self.fulfillsRequirement(el, property)) {
-					
+					if( self.fulfillsRequirement(card, property)) {					
 						return true;
-					}
-					
+					}					
 				});
+
+				if(!possible) {
+					validObj.result = false;
+					validObj.unmet.push(property);
+				}
 			});
-		}
-		return valid;			
-								
+		}							
+		return validObj;			
 	}
+
 	
 
 	/*------------------------
@@ -447,6 +473,8 @@
 			button.removeClass('inactive');
 			button.addClass('active');			
 			
+
+			//SOMETHING FISHY HERE - CALLED WHEN ONLY PROMO IS TAGGED 
 		} else {
 			
 			button.addClass('inactive');
@@ -490,13 +518,41 @@
 		}
 	}
 
-	function errorMsg(error) {
+	function errorMsg(error, list) {
+		
 		var msg = $('<p>');
 		msg.text(error);
 		$('.output').empty().append(msg);
+
+		if(list && list.length) {
+			var newList = ['The selected sets do not have any:'];
+
+			//Convert requirement names to more readable format
+			var errorTable = {
+				'actions' : '+2 actions',
+				'buys' : '+1 buy',
+				'cards' : '+2 cards',
+				'coins' : '+2 coins',
+				'isCurser' : 'cursers',
+				'isTrasher' : 'trashers',
+			}			
+
+			for(var i = 0; i < list.length; i++) {
+				newList.push(errorTable[list[i]]);				
+			}
+
+			var errorList = $('<dl>').addClass('error-list');
+			for(var i = 0; i < newList.length; i++) {
+				if(i == 0) {
+					var item = $('<dt>').text(newList[i]);
+				} else {
+					var item = $('<dd>').text(newList[i]);
+				}
+				errorList.append(item);
+			}
+			$('.output').append(errorList);
+		}
+
 	}
-
-
-
 
 })();
